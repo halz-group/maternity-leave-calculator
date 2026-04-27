@@ -543,12 +543,12 @@
     const birthDate = birthDateStr ? parseLocalDate(birthDateStr) : dueDate;
 
     const prenatalDays  = isMultiple ? 98 : 42;
-    const prenatalStart = addDays(dueDate, -prenatalDays);
+    const prenatalStart = addDays(birthDate, -(prenatalDays - 1));
     const prenatalEnd   = birthDate;
     const prenatalCount = diffDays(prenatalStart, prenatalEnd) + 1;
 
     const postnatalStart = birthDate;
-    const postnatalEnd   = addDays(birthDate, 55);
+    const postnatalEnd   = addDays(birthDate, 56);
     const postnatalCount = 56;
 
     const parentalStart = addDays(postnatalEnd, 1);
