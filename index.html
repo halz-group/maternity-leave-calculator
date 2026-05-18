@@ -23,6 +23,7 @@
       100% { background-position: 0% 50%; }
     }
 
+    /* ===== 浮かぶデコ ===== */
     .floating-decor { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; overflow:hidden; z-index:0; }
     .deco-item { position:absolute; animation:floatDeco ease-in-out infinite; font-size:1.8rem; opacity:0.55; }
     .deco-item:nth-child(1)  { top:5%;  left:4%;   font-size:2.2rem; animation-duration:7s;  animation-delay:0s;   }
@@ -43,6 +44,7 @@
 
     .wrapper { position:relative; z-index:1; max-width:700px; margin:0 auto; }
 
+    /* ===== ヘッダータイトルバナー ===== */
     .header { text-align:center; margin-bottom:28px; }
     .header-banner {
       display: inline-flex;
@@ -236,6 +238,129 @@
 
 <div class="wrapper">
   <div class="header">
+
+    <!-- ===== イラスト削除 ===== -->
+    <div class="baby-character" style="display:none">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="wb" x="-10%" y="-10%" width="120%" height="120%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.030 0.024" numOctaves="4" seed="7" result="n"/>
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="1.5" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+          <filter id="sf" x="-8%" y="-8%" width="116%" height="116%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.022 0.018" numOctaves="3" seed="3" result="n"/>
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="1.0" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+        </defs>
+
+        <!-- ===== 星・ハート 飾り ===== -->
+        <!-- ハート 左上 -->
+        <path d="M 24 28 C 24 22, 17 18, 13 23 C 9 28, 10 36, 18 42 L 24 47 L 30 42 C 38 36, 39 28, 35 23 C 31 18, 24 22, 24 28 Z"
+              fill="#f48fb1" filter="url(#wb)"/>
+        <!-- 星 右上 -->
+        <polygon points="170,14 173,22 182,22 175,27 178,36 170,31 162,36 165,27 158,22 167,22"
+                 fill="#fdd835" filter="url(#wb)"/>
+        <!-- 小さい星 左 -->
+        <polygon points="18,75 20,81 26,81 21,85 23,91 18,87 13,91 15,85 10,81 16,81"
+                 fill="#80cbc4" filter="url(#wb)"/>
+        <!-- 小さいハート 右 -->
+        <path d="M 183 68 C 183 64, 178 62, 176 65 C 174 68, 175 73, 180 77 L 183 80 L 186 77 C 191 73, 192 68, 190 65 C 188 62, 183 64, 183 68 Z"
+              fill="#f06292" filter="url(#wb)"/>
+        <!-- 音符 -->
+        <text x="148" y="50" font-family="Arial,sans-serif" font-size="18"
+              fill="#ce93d8" filter="url(#wb)">&#9834;</text>
+        <!-- 小花 左下 -->
+        <g transform="translate(22,150)" filter="url(#wb)">
+          <circle cx="0" cy="-8" r="5" fill="#ffccbc"/>
+          <circle cx="7" cy="-4" r="5" fill="#ffccbc"/>
+          <circle cx="7" cy=" 4" r="5" fill="#ffccbc"/>
+          <circle cx="0" cy=" 8" r="5" fill="#ffccbc"/>
+          <circle cx="-7" cy=" 4" r="5" fill="#ffccbc"/>
+          <circle cx="-7" cy="-4" r="5" fill="#ffccbc"/>
+          <circle cx="0"  cy=" 0" r="5" fill="#ff8a65"/>
+          <circle cx="0"  cy=" 0" r="2.5" fill="#fff9c4"/>
+        </g>
+        <!-- 小花 右下 -->
+        <g transform="translate(178,150)" filter="url(#wb)">
+          <circle cx="0" cy="-7" r="4.5" fill="#f8bbd0"/>
+          <circle cx="6" cy="-3" r="4.5" fill="#f8bbd0"/>
+          <circle cx="6" cy=" 3" r="4.5" fill="#f8bbd0"/>
+          <circle cx="0" cy=" 7" r="4.5" fill="#f8bbd0"/>
+          <circle cx="-6" cy=" 3" r="4.5" fill="#f8bbd0"/>
+          <circle cx="-6" cy="-3" r="4.5" fill="#f8bbd0"/>
+          <circle cx="0"  cy=" 0" r="4.5" fill="#f48fb1"/>
+          <circle cx="0"  cy=" 0" r="2.2" fill="#fff9c4"/>
+        </g>
+
+        <!-- ===== 子熊（おすわりポーズ） ===== -->
+        <!-- 足（前） -->
+        <ellipse cx="72" cy="177" rx="22" ry="13" fill="#c8925a" stroke="#a07040" stroke-width="1" filter="url(#sf)"/>
+        <ellipse cx="128" cy="177" rx="22" ry="13" fill="#c8925a" stroke="#a07040" stroke-width="1" filter="url(#sf)"/>
+        <ellipse cx="72" cy="179" rx="14" ry="8" fill="#e8a878" opacity="0.65"/>
+        <ellipse cx="128" cy="179" rx="14" ry="8" fill="#e8a878" opacity="0.65"/>
+
+        <!-- 体 -->
+        <ellipse cx="100" cy="152" rx="36" ry="30" fill="#c8925a" stroke="#a07040" stroke-width="1.2" filter="url(#sf)"/>
+        <!-- お腹 -->
+        <ellipse cx="100" cy="154" rx="22" ry="20" fill="#e8c49a" filter="url(#sf)"/>
+
+        <!-- 腕（左・右） -->
+        <ellipse cx="62" cy="148" rx="12" ry="20"
+                 fill="#c8925a" stroke="#a07040" stroke-width="1"
+                 transform="rotate(15 62 148)" filter="url(#sf)"/>
+        <circle cx="52" cy="162" r="12" fill="#c8925a" stroke="#a07040" stroke-width="1" filter="url(#sf)"/>
+        <ellipse cx="56" cy="163" rx="8" ry="5" fill="#e8a878" opacity="0.65"/>
+
+        <ellipse cx="138" cy="148" rx="12" ry="20"
+                 fill="#c8925a" stroke="#a07040" stroke-width="1"
+                 transform="rotate(-15 138 148)" filter="url(#sf)"/>
+        <circle cx="148" cy="162" r="12" fill="#c8925a" stroke="#a07040" stroke-width="1" filter="url(#sf)"/>
+        <ellipse cx="144" cy="163" rx="8" ry="5" fill="#e8a878" opacity="0.65"/>
+
+        <!-- 耳 -->
+        <circle cx="68"  cy="68" r="20" fill="#c8925a" stroke="#a07040" stroke-width="1.2" filter="url(#sf)"/>
+        <circle cx="68"  cy="68" r="12" fill="#e8a878" filter="url(#sf)"/>
+        <circle cx="132" cy="68" r="20" fill="#c8925a" stroke="#a07040" stroke-width="1.2" filter="url(#sf)"/>
+        <circle cx="132" cy="68" r="12" fill="#e8a878" filter="url(#sf)"/>
+
+        <!-- 頭 -->
+        <circle cx="100" cy="100" r="44" fill="#c8925a" stroke="#a07040" stroke-width="1.5" filter="url(#sf)"/>
+
+        <!-- マズル -->
+        <ellipse cx="100" cy="116" rx="26" ry="18" fill="#e8c49a" filter="url(#sf)"/>
+
+        <!-- 鼻 -->
+        <path d="M 91 109 Q 100 103 109 109 Q 105 116 100 116 Q 95 116 91 109 Z"
+              fill="#3e2010" filter="url(#wb)"/>
+
+        <!-- 目 -->
+        <circle cx="83"  cy="93" r="8" fill="#1a1a1a" filter="url(#sf)"/>
+        <circle cx="85"  cy="90" r="3" fill="white"/>
+        <circle cx="117" cy="93" r="8" fill="#1a1a1a" filter="url(#sf)"/>
+        <circle cx="119" cy="90" r="3" fill="white"/>
+
+        <!-- まつ毛 -->
+        <path d="M 75 86 L 72 81" stroke="#3e2010" stroke-width="1.5" stroke-linecap="round" filter="url(#wb)"/>
+        <path d="M 81 83 L 80 78" stroke="#3e2010" stroke-width="1.5" stroke-linecap="round" filter="url(#wb)"/>
+        <path d="M 119 83 L 120 78" stroke="#3e2010" stroke-width="1.5" stroke-linecap="round" filter="url(#wb)"/>
+        <path d="M 125 86 L 128 81" stroke="#3e2010" stroke-width="1.5" stroke-linecap="round" filter="url(#wb)"/>
+
+        <!-- ほっぺ -->
+        <ellipse cx="75"  cy="112" rx="12" ry="8" fill="#f48fb1" opacity="0.50" filter="url(#sf)"/>
+        <ellipse cx="125" cy="112" rx="12" ry="8" fill="#f48fb1" opacity="0.50" filter="url(#sf)"/>
+
+        <!-- 口 -->
+        <path d="M 91 123 Q 100 131 109 123"
+              stroke="#3e2010" stroke-width="2.2" fill="none" stroke-linecap="round" filter="url(#wb)"/>
+
+        <!-- リボン（頭の上） -->
+        <path d="M 88 60 C 80 52, 72 56, 78 62 C 84 68, 92 64, 100 60 C 108 56, 116 68, 122 62 C 128 56, 120 52, 112 60"
+              fill="#f48fb1" stroke="#e91e63" stroke-width="0.8" filter="url(#wb)"/>
+        <circle cx="100" cy="60" r="6" fill="#e91e63" filter="url(#sf)"/>
+
+      </svg>
+    </div>
+
     <div class="header-banner">
       <span class="banner-emoji">🌸</span>
       <h1>産前産後・育児休業 期間かんたん計算</h1>
@@ -244,6 +369,7 @@
     <p>出産予定日を入力するだけで、各休業期間をまとめて計算します</p>
   </div>
 
+  <!-- 入力カード -->
   <div class="card">
     <div class="card-title"><span class="icon">📅</span> 出産情報を入力してください</div>
 
@@ -276,6 +402,7 @@
     <button class="btn-calc" onclick="calculate()">🍼 計算する ✨</button>
   </div>
 
+  <!-- 結果エリア -->
   <div id="result-area">
 
     <div class="card fade-in" id="summary-card">
@@ -350,7 +477,8 @@
       <div class="note-box">
         <strong>⚠️ この計算について</strong>
         ・産前休業（労基法第65条）：出産予定日の6週間前（多胎14週間前）から出産日まで<br>
-        ・産後休業（労基法第65条）：出産日を含む56日間（出産日 = 1日目）<br>
+        　※出産日を含む<br>
+        ・産後休業（労基法第65条）：出産日の翌日から56日間<br>
         <span style="white-space:nowrap">・育児休業は子が1歳の誕生日の前日まで（原則）</span><br>
         ・保育所未入所等の場合は1歳6ヶ月・2歳まで延長可能<br>
         ・実際の出産日が未入力の場合は出産予定日を使って産後・育児休業を計算しています<br>
@@ -420,7 +548,7 @@
     const prenatalEnd   = birthDate;
     const prenatalCount = diffDays(prenatalStart, prenatalEnd) + 1;
 
-    const postnatalStart = birthDate;
+    const postnatalStart = addDays(birthDate, 1);
     const postnatalEnd   = addDays(birthDate, 56);
     const postnatalCount = 56;
 
