@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>出生時育児休業（パパ育休）計算アプリ</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
+      background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 50%, #e8f5e9 100%);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ===== 背景デコレーション ===== */
+    .deco-wrap {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .deco-item {
+      position: absolute;
+      animation: floatDeco ease-in-out infinite;
+      opacity: 0.4;
+    }
+    @keyframes floatDeco {
+      0%,100% { transform: translateY(0px) rotate(0deg) scale(1); }
+      33%      { transform: translateY(-16px) rotate(8deg) scale(1.08); }
+      66%      { transform: translateY(-7px) rotate(-5deg) scale(0.95); }
+    }
+
+    /* ===== レイアウト ===== */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 540px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    /* ===== ヘッダー ===== */
+    .header-banner {
+      background: linear-gradient(135deg, #1565c0 0%, #1976d2 50%, #7b1fa2 100%);
+      border-radius: 20px;
+      padding: 22px 16px;
+      text-align: center;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 18px rgba(21, 101, 192, 0.35);
+      color: white;
+    }
+    .header-banner .app-icon { font-size: 2.6rem; display: block; margin-bottom: 6px; }
+    .header-banner h1 { font-size: 1.15rem; font-weight: bold; line-height: 1.4; }
+    .header-banner p  { font-size: 0.8rem; opacity: 0.88; margin-top: 5px; }
+
+    /* ===== カード ===== */
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #1565c0;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e3f2fd;
+    }
+    .card-title .icon { font-size: 1.1rem; }
+
+    /* ===== フォーム ===== */
+    .form-group { margin-bottom: 12px; }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #444;
+      margin-bottom: 4px;
+    }
+    .form-group label .required { color: #e91e8c; margin-left: 4px; }
+    .form-group label .optional { color: #aaa; font-size: 0.75rem; margin-left: 4px; font-weight: normal; }
+    .form-group input[type="date"],
+    .form-group input[type="number"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #bbdefb;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.2s;
+      color: #333;
+      background: #fff;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: #1565c0;
+      box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.12);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* ===== 情報ボックス ===== */
+    .info-box {
+      background: #e3f2fd;
+      border: 1.5px solid #90caf9;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.84rem;
+      color: #1a237e;
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+    .info-box .info-title {
+      font-weight: bold;
+      font-size: 0.9rem;
+      margin-bottom: 3px;
+    }
+
+    /* ===== 取得可能期間表示 ===== */
+    .window-display {
+      display: none;
+      background: linear-gradient(135deg, #e8eaf6, #e3f2fd);
+      border: 2px solid #7986cb;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .window-display .w-label { font-size: 0.8rem; color: #5c6bc0; font-weight: bold; }
+    .window-display .w-dates { font-size: 1rem; font-weight: bold; color: #283593; margin: 4px 0; }
+    .window-display .w-sub   { font-size: 0.78rem; color: #7986cb; }
+
+    /* ===== プレビュー ===== */
+    .preview-box {
+      display: none;
+      background: linear-gradient(135deg, #e8f5e9, #e3f2fd);
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: center;
+      margin-top: 8px;
+    }
+    .preview-box .p-dates { font-size: 0.95rem; font-weight: bold; color: #1565c0; }
+    .preview-box .p-sub   { font-size: 0.78rem; color: #888; margin-top: 2px; }
+
+    /* ===== トグルスイッチ ===== */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .toggle-label { font-size: 0.9rem; font-weight: bold; color: #333; flex: 1; }
+    .toggle-switch {
+      position: relative;
+      width: 52px;
+      height: 28px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: #ccc;
+      border-radius: 28px;
+      transition: 0.3s;
+    }
+    .toggle-track::before {
+      content: '';
+      position: absolute;
+      height: 22px; width: 22px;
+      left: 3px; bottom: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.3s;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    }
+    .toggle-switch input:checked + .toggle-track { background: #1565c0; }
+    .toggle-switch input:checked + .toggle-track::before { transform: translateX(24px); }
+
+    .second-section { display: none; }
+    .second-section.visible { display: block; }
+
+    /* ===== 計算ボタン ===== */
+    .calc-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #1565c0, #1976d2);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: inherit;
+      margin-bottom: 12px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 14px rgba(21, 101, 192, 0.4);
+    }
+    .calc-btn:hover  { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(21, 101, 192, 0.5); }
+    .calc-btn:active { transform: translateY(0); }
+
+    /* ===== 計算結果 ===== */
+    .results-card { display: none; }
+    .results-card.visible { display: block; }
+
+    .summary-bar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .s-item {
+      border-radius: 12px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+    .s-item.blue  { background: linear-gradient(135deg, #e3f2fd, #bbdefb); }
+    .s-item.green { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); }
+    .s-item .s-num   { font-size: 2rem; font-weight: bold; line-height: 1; }
+    .s-item.blue  .s-num { color: #0d47a1; }
+    .s-item.green .s-num { color: #1b5e20; }
+    .s-item .s-unit  { font-size: 0.85rem; font-weight: bold; }
+    .s-item.blue  .s-unit { color: #1565c0; }
+    .s-item.green .s-unit { color: #2e7d32; }
+    .s-item .s-label { font-size: 0.72rem; color: #777; margin-top: 2px; }
+
+    .tl { margin-top: 4px; }
+    .tl-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid #e3f2fd;
+    }
+    .tl-item:last-child { border-bottom: none; }
+    .tl-dot { font-size: 1.1rem; flex-shrink: 0; padding-top: 2px; }
+    .tl-content { flex: 1; }
+    .tl-label   { font-size: 0.82rem; font-weight: bold; color: #1565c0; margin-bottom: 2px; }
+    .tl-dates   { font-size: 0.9rem; font-weight: bold; color: #222; }
+    .tl-days    { font-size: 0.78rem; color: #888; margin-top: 1px; }
+    .tl-item.window .tl-label  { color: #7b1fa2; }
+    .tl-item.window .tl-dates  { color: #4a148c; }
+
+    /* ===== エラー ===== */
+    .err-msg {
+      background: #ffebee;
+      border: 1.5px solid #ef9a9a;
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: #c62828;
+      font-size: 0.83rem;
+      margin-top: 6px;
+    }
+    .err-msg::before { content: '⚠️ '; }
+
+    /* ===== 注意事項 ===== */
+    .note-card {
+      background: #fff8e1;
+      border: 1.5px solid #ffe082;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .note-card .note-title { font-size: 0.9rem; font-weight: bold; color: #e65100; margin-bottom: 7px; }
+    .note-card p { font-size: 0.8rem; color: #5d4037; line-height: 1.65; margin-bottom: 3px; }
+
+    /* ===== リンク ===== */
+    .link-card {
+      background: #fce4ec;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .link-card p { font-size: 0.82rem; color: #888; margin-bottom: 6px; }
+    .link-card a {
+      color: #ad1457;
+      font-weight: bold;
+      font-size: 0.9rem;
+      text-decoration: none;
+    }
+
+    /* ===== フッター ===== */
+    .footer {
+      text-align: center;
+      font-size: 0.74rem;
+      color: #bbb;
+      padding: 12px 0 28px;
+    }
+
+    /* ===== 残り日数の色変化 ===== */
+    .s-item.warn { background: linear-gradient(135deg, #fff3e0, #ffe0b2); }
+    .s-item.warn .s-num  { color: #bf360c; }
+    .s-item.warn .s-unit { color: #e64a19; }
+  </style>
+</head>
+<body>
+
+<!-- 背景デコレーション -->
+<div class="deco-wrap" id="decoWrap"></div>
+
+<div class="container">
+
+  <!-- ヘッダー -->
+  <div class="header-banner">
+    <span class="app-icon">👨‍👶</span>
+    <h1>出生時育児休業（パパ育休）<br>期間計算アプリ</h1>
+    <p>1回目・2回目の取得期間と残り日数を計算します</p>
+  </div>
+
+  <!-- 基準日の入力 -->
+  <div class="card">
+    <div class="card-title"><span class="icon">📅</span> 基準日の入力</div>
+
+    <div class="info-box">
+      <div class="info-title">💡 入力方法</div>
+      出産予定日または実際の出産日を入力してください。<br>
+      両方入力した場合は<b>実際の出産日</b>が優先されます。
+    </div>
+
+    <div class="form-group">
+      <label>出産予定日<span class="optional">（任意）</span></label>
+      <input type="date" id="dueDate" oninput="updateWindow()">
+    </div>
+    <div class="form-group" style="margin-bottom:4px;">
+      <label>実際の出産日<span class="optional">（任意）</span></label>
+      <input type="date" id="birthDate" oninput="updateWindow()">
+    </div>
+
+    <div class="window-display" id="windowDisplay">
+      <div class="w-label">📋 取得可能期間</div>
+      <div class="w-dates" id="windowDates">—</div>
+      <div class="w-sub">この期間内に最大 <b>28日間</b> 取得できます（2回まで分割可）</div>
+    </div>
+  </div>
+
+  <!-- 1回目 -->
+  <div class="card">
+    <div class="card-title"><span class="icon">🌟</span> 1回目の取得期間</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>開始日<span class="required">*</span></label>
+        <input type="date" id="start1" oninput="updatePreview(1)">
+      </div>
+      <div class="form-group">
+        <label>日数（日間）<span class="required">*</span></label>
+        <input type="number" id="days1" min="1" max="28" placeholder="例：14" oninput="updatePreview(1)">
+      </div>
+    </div>
+    <div class="preview-box" id="preview1">
+      <div class="p-dates" id="pDates1"></div>
+      <div class="p-sub"   id="pSub1"></div>
+    </div>
+    <div id="err1"></div>
+  </div>
+
+  <!-- 2回目 -->
+  <div class="card">
+    <div class="card-title"><span class="icon">⭐</span> 2回目の取得期間</div>
+    <div class="toggle-row">
+      <span class="toggle-label">2回目も取得する</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="useSecond" onchange="toggleSecond()">
+        <span class="toggle-track"></span>
+      </label>
+    </div>
+    <div class="second-section" id="secondSection">
+      <div class="form-row">
+        <div class="form-group">
+          <label>開始日</label>
+          <input type="date" id="start2" oninput="updatePreview(2)">
+        </div>
+        <div class="form-group">
+          <label>日数（日間）</label>
+          <input type="number" id="days2" min="1" max="28" placeholder="例：14" oninput="updatePreview(2)">
+        </div>
+      </div>
+      <div class="preview-box" id="preview2" style="background:linear-gradient(135deg,#f3e5f5,#e8f5e9);">
+        <div class="p-dates" id="pDates2" style="color:#6a1b9a;"></div>
+        <div class="p-sub"   id="pSub2"></div>
+      </div>
+      <div id="err2"></div>
+    </div>
+  </div>
+
+  <!-- 計算ボタン -->
+  <button class="calc-btn" onclick="calculate()">✨ 計算する</button>
+
+  <!-- 計算結果 -->
+  <div class="card results-card" id="resultsCard">
+    <div class="card-title"><span class="icon">📊</span> 計算結果</div>
+
+    <div class="summary-bar">
+      <div class="s-item blue">
+        <div class="s-num"  id="sumTotal">—</div>
+        <div class="s-unit">日間</div>
+        <div class="s-label">合計取得日数</div>
+      </div>
+      <div class="s-item green" id="sumRemainItem">
+        <div class="s-num"  id="sumRemain">28</div>
+        <div class="s-unit">日間</div>
+        <div class="s-label">残り取得可能日数</div>
+      </div>
+    </div>
+
+    <div class="tl" id="resultTL"></div>
+    <div id="resultErrs"></div>
+  </div>
+
+  <!-- 注意事項 -->
+  <div class="note-card">
+    <div class="note-title">⚠️ ご注意事項</div>
+    <p>・出生時育児休業（産後パパ育休）は子の出生後8週間以内（56日間）に最大28日間取得できます</p>
+    <p>・分割取得は2回まで可能。合計日数が28日を超えることはできません</p>
+    <p>・2回目の開始日は1回目の終了日より後の日付を設定してください</p>
+    <p>・実際の出産日が確定した場合は、取得可能期間が出産予定日とずれることがあります</p>
+    <p>・うるう年にも対応しています</p>
+    <p>・この計算はあくまで目安です。詳細は会社の人事部や社会保険労務士にご確認ください</p>
+  </div>
+
+  <!-- 産前産後アプリへのリンク -->
+  <div class="link-card">
+    <p>産前休業・産後休業・育児休業の計算はこちら</p>
+    <a href="https://halz-group.github.io/maternity-leave-calculator/">🌸 産前産後・育児休業期間計算アプリ →</a>
+  </div>
+
+  <div class="footer">© 株式会社HALZ ｜ 出生時育児休業（パパ育休）計算アプリ</div>
+</div>
+
+<script>
+/* =====================================================
+   日付ユーティリティ
+   ===================================================== */
+function parseDate(s) {
+  if (!s) return null;
+  const [y, m, d] = s.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+function toWareki(y) {
+  if (y >= 2019) return '令和' + (y - 2018) + '（' + y + '）';
+  if (y >= 1989) return '平成' + (y - 1988) + '（' + y + '）';
+  return '' + y;
+}
+
+function fmt(d) {
+  if (!d) return '';
+  return toWareki(d.getFullYear()) + '年' + (d.getMonth()+1) + '月' + d.getDate() + '日';
+}
+
+function addDays(d, n) {
+  const r = new Date(d);
+  r.setDate(r.getDate() + n);
+  return r;
+}
+
+function diffDays(a, b) {
+  return Math.round((b - a) / 86400000);
+}
+
+/* =====================================================
+   状態
+   ===================================================== */
+let baseDate   = null;
+let windowStart = null;
+let windowEnd   = null;
+
+/* =====================================================
+   取得可能期間の更新
+   ===================================================== */
+function updateWindow() {
+  const birth = parseDate(document.getElementById('birthDate').value);
+  const due   = parseDate(document.getElementById('dueDate').value);
+
+  // 実際の出産日 > 出産予定日 の優先順位
+  baseDate = birth || due || null;
+
+  const box = document.getElementById('windowDisplay');
+  if (!baseDate) {
+    box.style.display = 'none';
+    windowStart = windowEnd = null;
+    return;
+  }
+
+  // 取得可能期間：出産日当日から数えて56日間（起算日を1日目とする）
+  // 56日目 = addDays(baseDate, 55)
+  windowStart = baseDate;
+  windowEnd   = addDays(baseDate, 55);
+
+  document.getElementById('windowDates').textContent =
+    fmt(windowStart) + ' 〜 ' + fmt(windowEnd);
+  box.style.display = 'block';
+
+  // プレビューも更新
+  updatePreview(1);
+  updatePreview(2);
+}
+
+/* =====================================================
+   プレビュー更新
+   ===================================================== */
+function updatePreview(n) {
+  const startVal = document.getElementById('start' + n).value;
+  const daysVal  = parseInt(document.getElementById('days' + n).value);
+
+  const box = document.getElementById('preview' + n);
+  if (!startVal || !daysVal || daysVal < 1) {
+    box.style.display = 'none';
+    return;
+  }
+
+  const start = parseDate(startVal);
+  const end   = addDays(start, daysVal - 1);
+
+  document.getElementById('pDates' + n).textContent = fmt(start) + ' 〜 ' + fmt(end);
+  document.getElementById('pSub' + n).textContent   = '（' + daysVal + '日間）';
+  box.style.display = 'block';
+}
+
+/* =====================================================
+   2回目トグル
+   ===================================================== */
+function toggleSecond() {
+  const on = document.getElementById('useSecond').checked;
+  const sec = document.getElementById('secondSection');
+  if (on) {
+    sec.classList.add('visible');
+  } else {
+    sec.classList.remove('visible');
+    document.getElementById('preview2').style.display = 'none';
+    document.getElementById('err2').innerHTML = '';
+  }
+}
+
+/* =====================================================
+   計算メイン
+   ===================================================== */
+function calculate() {
+  // エラークリア
+  ['err1','err2','resultErrs'].forEach(id => {
+    document.getElementById(id).innerHTML = '';
+  });
+
+  // 基準日チェック
+  if (!baseDate) {
+    showResultErr(['出産予定日または実際の出産日を入力してください']);
+    return;
+  }
+
+  // 1回目の入力チェック
+  const s1Val = document.getElementById('start1').value;
+  const d1Val = parseInt(document.getElementById('days1').value);
+  if (!s1Val || !d1Val || d1Val < 1) {
+    showResultErr(['1回目の開始日と日数を入力してください']);
+    return;
+  }
+  const start1 = parseDate(s1Val);
+  const end1   = addDays(start1, d1Val - 1);
+
+  // 2回目
+  const useSecond = document.getElementById('useSecond').checked;
+  let start2 = null, end2 = null, d2Val = 0;
+  if (useSecond) {
+    const s2Val = document.getElementById('start2').value;
+    d2Val = parseInt(document.getElementById('days2').value);
+    if (!s2Val || !d2Val || d2Val < 1) {
+      showResultErr(['2回目の開始日と日数を入力してください（または「2回目も取得する」をOFFにしてください）']);
+      return;
+    }
+    start2 = parseDate(s2Val);
+    end2   = addDays(start2, d2Val - 1);
+  }
+
+  let hasError = false;
+
+  // バリデーション：1回目が取得可能期間内か
+  if (start1 < windowStart || end1 > windowEnd) {
+    document.getElementById('err1').innerHTML =
+      '<div class="err-msg">1回目の期間が取得可能期間（' +
+      fmt(windowStart) + ' 〜 ' + fmt(windowEnd) +
+      '）の外になっています</div>';
+    hasError = true;
+  }
+
+  // バリデーション：2回目が取得可能期間内か
+  if (useSecond && (start2 < windowStart || end2 > windowEnd)) {
+    document.getElementById('err2').innerHTML =
+      '<div class="err-msg">2回目の期間が取得可能期間（' +
+      fmt(windowStart) + ' 〜 ' + fmt(windowEnd) +
+      '）の外になっています</div>';
+    hasError = true;
+  }
+
+  // バリデーション：2回目が1回目の終了後か
+  if (useSecond && start2 && start2 <= end1) {
+    document.getElementById('err2').innerHTML =
+      '<div class="err-msg">2回目の開始日は1回目の終了日（' +
+      fmt(end1) + '）より後の日付にしてください</div>';
+    hasError = true;
+  }
+
+  // 合計日数
+  const totalDays  = d1Val + (useSecond ? d2Val : 0);
+  const remainDays = 28 - totalDays;
+
+  // バリデーション：28日超過
+  if (totalDays > 28) {
+    document.getElementById('resultErrs').innerHTML =
+      '<div class="err-msg">合計取得日数が ' + totalDays +
+      ' 日になっています。上限の28日を超えているため修正してください</div>';
+    hasError = true;
+  }
+
+  // サマリー更新
+  document.getElementById('sumTotal').textContent = totalDays;
+  document.getElementById('sumRemain').textContent = Math.max(0, remainDays);
+
+  // 残り日数のカラー変化
+  const remainItem = document.getElementById('sumRemainItem');
+  remainItem.className = 's-item ' +
+    (remainDays < 0 ? 'warn' : remainDays === 0 ? 'warn' : 'green');
+
+  // タイムライン
+  let tlHTML = '';
+  tlHTML += makeTLItem('🌟', 'default',
+    '1回目の取得期間', start1, end1, d1Val + '日間');
+
+  if (useSecond && start2 && end2) {
+    tlHTML += makeTLItem('⭐', 'default',
+      '2回目の取得期間', start2, end2, d2Val + '日間');
+  }
+
+  tlHTML += makeTLItem('📋', 'window',
+    '取得可能期間', windowStart, windowEnd,
+    'この期間内に最大28日間取得可（出産日から8週間）');
+
+  document.getElementById('resultTL').innerHTML = tlHTML;
+
+  const rc = document.getElementById('resultsCard');
+  rc.classList.add('visible');
+  rc.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function makeTLItem(icon, cls, label, start, end, sub) {
+  return '<div class="tl-item ' + cls + '">' +
+    '<div class="tl-dot">' + icon + '</div>' +
+    '<div class="tl-content">' +
+      '<div class="tl-label">' + label + '</div>' +
+      '<div class="tl-dates">' + fmt(start) + ' 〜 ' + fmt(end) + '</div>' +
+      '<div class="tl-days">' + sub + '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function showResultErr(msgs) {
+  document.getElementById('resultErrs').innerHTML =
+    msgs.map(m => '<div class="err-msg">' + m + '</div>').join('');
+  const rc = document.getElementById('resultsCard');
+  rc.classList.add('visible');
+  rc.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+/* =====================================================
+   背景デコレーション（ランダム配置）
+   ===================================================== */
+(function () {
+  const emojis = ['👶','🍼','💙','⭐','✨','💫','🌟','🎀','💕','🧸','🌷','🎊'];
+  const wrap = document.getElementById('decoWrap');
+  for (let i = 0; i < 20; i++) {
+    const el = document.createElement('div');
+    el.className = 'deco-item';
+    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    const left  = Math.random() * 100;
+    const top   = Math.random() * 120;
+    const dur   = 4 + Math.random() * 5;
+    const delay = Math.random() * -8;
+    const size  = (1.1 + Math.random() * 1.2).toFixed(1);
+    el.style.cssText =
+      'left:' + left + '%;top:' + top + '%;' +
+      'animation-duration:' + dur.toFixed(1) + 's;' +
+      'animation-delay:' + delay.toFixed(1) + 's;' +
+      'font-size:' + size + 'rem;';
+    wrap.appendChild(el);
+  }
+})();
+</script>
+</body>
+</html>
