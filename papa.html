@@ -47,14 +47,13 @@
     .header-banner {
       background: linear-gradient(135deg, #1565c0 0%, #1976d2 50%, #7b1fa2 100%);
       border-radius: 20px;
-      padding: 22px 16px;
+      padding: 20px 16px;
       text-align: center;
       margin-bottom: 16px;
       box-shadow: 0 4px 18px rgba(21, 101, 192, 0.35);
       color: white;
     }
-    .header-banner .app-icon { font-size: 2.6rem; display: block; margin-bottom: 6px; }
-    .header-banner h1 { font-size: 1.15rem; font-weight: bold; line-height: 1.4; }
+    .header-banner h1 { font-size: 1.05rem; font-weight: bold; line-height: 1.4; white-space: nowrap; }
     .header-banner p  { font-size: 0.8rem; opacity: 0.88; margin-top: 5px; }
 
     /* ===== カード ===== */
@@ -135,13 +134,26 @@
       background: linear-gradient(135deg, #e8eaf6, #e3f2fd);
       border: 2px solid #7986cb;
       border-radius: 12px;
-      padding: 12px;
+      padding: 14px 12px;
       margin-top: 10px;
       text-align: center;
     }
-    .window-display .w-label { font-size: 0.8rem; color: #5c6bc0; font-weight: bold; }
-    .window-display .w-dates { font-size: 1rem; font-weight: bold; color: #283593; margin: 4px 0; }
-    .window-display .w-sub   { font-size: 0.78rem; color: #7986cb; }
+    .window-display .w-label { font-size: 0.8rem; color: #5c6bc0; font-weight: bold; margin-bottom: 4px; }
+    .window-display .w-dates { font-size: 1rem; font-weight: bold; color: #283593; margin: 4px 0 10px; }
+    .window-display .w-max-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: linear-gradient(135deg, #1565c0, #7b1fa2);
+      color: white;
+      border-radius: 50px;
+      padding: 6px 20px;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+    .window-display .w-max-num  { font-size: 2rem; line-height: 1; }
+    .window-display .w-max-unit { font-size: 1rem; }
+    .window-display .w-sub      { font-size: 0.78rem; color: #7986cb; }
 
     /* ===== プレビュー ===== */
     .preview-box {
@@ -317,8 +329,7 @@
 
   <!-- ヘッダー -->
   <div class="header-banner">
-    <span class="app-icon">👨‍👶</span>
-    <h1>出生時育児休業（パパ育休）<br>期間計算アプリ</h1>
+    <h1>出生時育児休業（パパ育休）期間計算アプリ</h1>
     <p>1回目・2回目の取得期間と残り日数を計算します</p>
   </div>
 
@@ -344,7 +355,12 @@
     <div class="window-display" id="windowDisplay">
       <div class="w-label">📋 取得可能期間</div>
       <div class="w-dates" id="windowDates">—</div>
-      <div class="w-sub">この期間内に最大 <b>28日間</b> 取得できます（2回まで分割可）</div>
+      <div class="w-max-badge">
+        <span class="w-max-unit">最大</span>
+        <span class="w-max-num">28</span>
+        <span class="w-max-unit">日間取得できます</span>
+      </div>
+      <div class="w-sub">2回まで分割可</div>
     </div>
   </div>
 
@@ -430,6 +446,17 @@
     <p>・実際の出産日が確定した場合は、取得可能期間が出産予定日とずれることがあります</p>
     <p>・うるう年にも対応しています</p>
     <p>・この計算はあくまで目安です。詳細は会社の人事部や社会保険労務士にご確認ください</p>
+  </div>
+
+  <!-- QRコード -->
+  <div class="card" style="text-align:center;">
+    <div class="card-title" style="justify-content:center;"><span class="icon">📱</span> このアプリのQRコード</div>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=10&data=https://halz-group.github.io/maternity-leave-calculator/papa.html"
+         alt="QRコード" width="200" height="200"
+         style="border-radius:8px; border:1px solid #e0e0e0;">
+    <p style="font-size:0.75rem; color:#aaa; margin-top:8px;">
+      https://halz-group.github.io/maternity-leave-calculator/papa.html
+    </p>
   </div>
 
   <!-- 産前産後アプリへのリンク -->
