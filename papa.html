@@ -611,10 +611,22 @@ function calculate() {
 
   // ===== バリデーション =====
 
-  // 1回目：最大28日
-  if (d1Val > 28) {
-    document.getElementById('err1').innerHTML =
-      '<div class="err-msg">最大28日間です（現在：' + d1Val + '日間）</div>';
+  // 合計日数
+  const totalDays  = d1Val + (useSecond ? d2Val : 0);
+  const remainDays = 28 - totalDays;
+
+  // 28日上限チェック
+  if (totalDays > 28) {
+    if (useSecond) {
+      // 2回目がある → 合計エラー
+      document.getElementById('resultErrs').innerHTML =
+        '<div class="err-msg">1回目（' + d1Val + '日）＋2回目（' + d2Val +
+        '日）＝合計' + totalDays + '日になっています。1回目と2回目の合計は28日間が上限です</div>';
+    } else {
+      // 1回目のみ → 個別エラー
+      document.getElementById('err1').innerHTML =
+        '<div class="err-msg">最大28日間です（現在：' + d1Val + '日間）</div>';
+    }
   }
 
   // 1回目：取得可能期間内か
@@ -622,12 +634,6 @@ function calculate() {
     document.getElementById('err1').innerHTML +=
       '<div class="err-msg">1回目の期間が取得可能期間（' +
       fmt(windowStart) + ' 〜 ' + fmt(windowEnd) + '）の外になっています</div>';
-  }
-
-  // 2回目：最大28日
-  if (useSecond && d2Val > 28) {
-    document.getElementById('err2').innerHTML =
-      '<div class="err-msg">最大28日間です（現在：' + d2Val + '日間）</div>';
   }
 
   // 2回目：取得可能期間内か
@@ -642,16 +648,6 @@ function calculate() {
     document.getElementById('err2').innerHTML +=
       '<div class="err-msg">2回目の開始日は1回目の終了日（' +
       fmt(end1) + '）より後の日付にしてください</div>';
-  }
-
-  // 合計日数チェック（2回目がある場合）
-  const totalDays  = d1Val + (useSecond ? d2Val : 0);
-  const remainDays = 28 - totalDays;
-
-  if (useSecond && totalDays > 28) {
-    document.getElementById('resultErrs').innerHTML =
-      '<div class="err-msg">1回目（' + d1Val + '日）＋2回目（' + d2Val +
-      '日）＝合計' + totalDays + '日になっています。合計28日を超えることはできません</div>';
   }
 
   showResults(start1, end1, d1Val, useSecond ? start2 : null, useSecond ? end2 : null);
