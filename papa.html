@@ -357,8 +357,8 @@
         <input type="date" id="start1" oninput="updatePreview(1)">
       </div>
       <div class="form-group">
-        <label>日数（日間）<span class="required">*</span></label>
-        <input type="number" id="days1" min="1" max="28" placeholder="例：14" oninput="updatePreview(1)">
+        <label>終了日<span class="required">*</span></label>
+        <input type="date" id="end1" oninput="updatePreview(1)">
       </div>
     </div>
     <div class="preview-box" id="preview1">
@@ -385,8 +385,8 @@
           <input type="date" id="start2" oninput="updatePreview(2)">
         </div>
         <div class="form-group">
-          <label>日数（日間）</label>
-          <input type="number" id="days2" min="1" max="28" placeholder="例：14" oninput="updatePreview(2)">
+          <label>終了日</label>
+          <input type="date" id="end2" oninput="updatePreview(2)">
         </div>
       </div>
       <div class="preview-box" id="preview2" style="background:linear-gradient(135deg,#f3e5f5,#e8f5e9);">
@@ -515,19 +515,25 @@ function updateWindow() {
    ===================================================== */
 function updatePreview(n) {
   const startVal = document.getElementById('start' + n).value;
-  const daysVal  = parseInt(document.getElementById('days' + n).value);
+  const endVal   = document.getElementById('end' + n).value;
 
   const box = document.getElementById('preview' + n);
-  if (!startVal || !daysVal || daysVal < 1) {
+  if (!startVal || !endVal) {
     box.style.display = 'none';
     return;
   }
 
   const start = parseDate(startVal);
-  const end   = addDays(start, daysVal - 1);
+  const end   = parseDate(endVal);
 
+  if (end < start) {
+    box.style.display = 'none';
+    return;
+  }
+
+  const days = diffDays(start, end) + 1;
   document.getElementById('pDates' + n).textContent = fmt(start) + ' 〜 ' + fmt(end);
-  document.getElementById('pSub' + n).textContent   = '（' + daysVal + '日間）';
+  document.getElementById('pSub' + n).textContent   = '（' + days + '日間）';
   box.style.display = 'block';
 }
 
@@ -543,6 +549,7 @@ function toggleSecond() {
     sec.classList.remove('visible');
     document.getElementById('preview2').style.display = 'none';
     document.getElementById('err2').innerHTML = '';
+    document.getElementById('resultErrs').innerHTML = '';
   }
 }
 
@@ -563,90 +570,123 @@ function calculate() {
 
   // 1回目の入力チェック
   const s1Val = document.getElementById('start1').value;
-  const d1Val = parseInt(document.getElementById('days1').value);
-  if (!s1Val || !d1Val || d1Val < 1) {
-    showResultErr(['1回目の開始日と日数を入力してください']);
+  const e1Val = document.getElementById('end1').value;
+  if (!s1Val || !e1Val) {
+    showResultErr(['1回目の開始日と終了日を入力してください']);
     return;
   }
   const start1 = parseDate(s1Val);
-  const end1   = addDays(start1, d1Val - 1);
+  const end1   = parseDate(e1Val);
+
+  // 終了日が開始日より前チェック
+  if (end1 < start1) {
+    document.getElementById('err1').innerHTML =
+      '<div class="err-msg">終了日は開始日と同じ日か、後の日付にしてください</div>';
+    showResults(null, null, null, null, null);
+    return;
+  }
+  const d1Val = diffDays(start1, end1) + 1;
 
   // 2回目
   const useSecond = document.getElementById('useSecond').checked;
   let start2 = null, end2 = null, d2Val = 0;
   if (useSecond) {
     const s2Val = document.getElementById('start2').value;
-    d2Val = parseInt(document.getElementById('days2').value);
-    if (!s2Val || !d2Val || d2Val < 1) {
-      showResultErr(['2回目の開始日と日数を入力してください（または「2回目も取得する」をOFFにしてください）']);
+    const e2Val = document.getElementById('end2').value;
+    if (!s2Val || !e2Val) {
+      showResultErr(['2回目の開始日と終了日を入力してください（または「2回目も取得する」をOFFにしてください）']);
       return;
     }
     start2 = parseDate(s2Val);
-    end2   = addDays(start2, d2Val - 1);
+    end2   = parseDate(e2Val);
+
+    if (end2 < start2) {
+      document.getElementById('err2').innerHTML =
+        '<div class="err-msg">2回目の終了日は開始日と同じ日か、後の日付にしてください</div>';
+      showResults(start1, end1, d1Val, null, null);
+      return;
+    }
+    d2Val = diffDays(start2, end2) + 1;
   }
 
-  let hasError = false;
+  // ===== バリデーション =====
 
-  // バリデーション：1回目が取得可能期間内か
-  if (start1 < windowStart || end1 > windowEnd) {
+  // 1回目：最大28日
+  if (d1Val > 28) {
     document.getElementById('err1').innerHTML =
+      '<div class="err-msg">最大28日間です（現在：' + d1Val + '日間）</div>';
+  }
+
+  // 1回目：取得可能期間内か
+  if (windowStart && (start1 < windowStart || end1 > windowEnd)) {
+    document.getElementById('err1').innerHTML +=
       '<div class="err-msg">1回目の期間が取得可能期間（' +
-      fmt(windowStart) + ' 〜 ' + fmt(windowEnd) +
-      '）の外になっています</div>';
-    hasError = true;
+      fmt(windowStart) + ' 〜 ' + fmt(windowEnd) + '）の外になっています</div>';
   }
 
-  // バリデーション：2回目が取得可能期間内か
-  if (useSecond && (start2 < windowStart || end2 > windowEnd)) {
+  // 2回目：最大28日
+  if (useSecond && d2Val > 28) {
     document.getElementById('err2').innerHTML =
+      '<div class="err-msg">最大28日間です（現在：' + d2Val + '日間）</div>';
+  }
+
+  // 2回目：取得可能期間内か
+  if (useSecond && windowStart && (start2 < windowStart || end2 > windowEnd)) {
+    document.getElementById('err2').innerHTML +=
       '<div class="err-msg">2回目の期間が取得可能期間（' +
-      fmt(windowStart) + ' 〜 ' + fmt(windowEnd) +
-      '）の外になっています</div>';
-    hasError = true;
+      fmt(windowStart) + ' 〜 ' + fmt(windowEnd) + '）の外になっています</div>';
   }
 
-  // バリデーション：2回目が1回目の終了後か
-  if (useSecond && start2 && start2 <= end1) {
-    document.getElementById('err2').innerHTML =
+  // 2回目：1回目の終了日より後か
+  if (useSecond && start2 <= end1) {
+    document.getElementById('err2').innerHTML +=
       '<div class="err-msg">2回目の開始日は1回目の終了日（' +
       fmt(end1) + '）より後の日付にしてください</div>';
-    hasError = true;
   }
 
-  // 合計日数
+  // 合計日数チェック（2回目がある場合）
   const totalDays  = d1Val + (useSecond ? d2Val : 0);
   const remainDays = 28 - totalDays;
 
-  // バリデーション：28日超過
-  if (totalDays > 28) {
+  if (useSecond && totalDays > 28) {
     document.getElementById('resultErrs').innerHTML =
-      '<div class="err-msg">合計取得日数が ' + totalDays +
-      ' 日になっています。上限の28日を超えているため修正してください</div>';
-    hasError = true;
+      '<div class="err-msg">1回目（' + d1Val + '日）＋2回目（' + d2Val +
+      '日）＝合計' + totalDays + '日になっています。合計28日を超えることはできません</div>';
   }
 
-  // サマリー更新
-  document.getElementById('sumTotal').textContent = totalDays;
-  document.getElementById('sumRemain').textContent = Math.max(0, remainDays);
+  showResults(start1, end1, d1Val, useSecond ? start2 : null, useSecond ? end2 : null);
+}
 
-  // 残り日数のカラー変化
+/* =====================================================
+   結果表示（エラーがあっても表示する）
+   ===================================================== */
+function showResults(start1, end1, d1Val, start2, end2) {
+  const useSecond = document.getElementById('useSecond').checked;
+  const d2Val = (start2 && end2) ? diffDays(start2, end2) + 1 : 0;
+  const totalDays  = (d1Val || 0) + d2Val;
+  const remainDays = 28 - totalDays;
+
+  document.getElementById('sumTotal').textContent  = d1Val !== null ? totalDays : '—';
+  document.getElementById('sumRemain').textContent = d1Val !== null ? Math.max(0, remainDays) : '28';
+
   const remainItem = document.getElementById('sumRemainItem');
   remainItem.className = 's-item ' +
     (remainDays < 0 ? 'warn' : remainDays === 0 ? 'warn' : 'green');
 
-  // タイムライン
   let tlHTML = '';
-  tlHTML += makeTLItem('🌟', 'default',
-    '1回目の取得期間', start1, end1, d1Val + '日間');
-
-  if (useSecond && start2 && end2) {
+  if (start1 && end1) {
+    tlHTML += makeTLItem('🌟', 'default',
+      '1回目の取得期間', start1, end1, d1Val + '日間');
+  }
+  if (start2 && end2) {
     tlHTML += makeTLItem('⭐', 'default',
       '2回目の取得期間', start2, end2, d2Val + '日間');
   }
-
-  tlHTML += makeTLItem('📋', 'window',
-    '取得可能期間', windowStart, windowEnd,
-    'この期間内に最大28日間取得可（出産日から8週間）');
+  if (windowStart && windowEnd) {
+    tlHTML += makeTLItem('📋', 'window',
+      '取得可能期間', windowStart, windowEnd,
+      'この期間内に最大28日間取得可（出産日から8週間）');
+  }
 
   document.getElementById('resultTL').innerHTML = tlHTML;
 
