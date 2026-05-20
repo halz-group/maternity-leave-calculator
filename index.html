@@ -175,17 +175,20 @@
     .tl-box.parental  { background:#e8f5e9; border-color:#81c784; }
     .tl-box.parental2 { background:#e3f2fd; border-color:#64b5f6; }
     .tl-box.parental3 { background:#e0f2f1; border-color:#4db6ac; }
+    .tl-box.papa      { background:#fff8e1; border-color:#ffcc02; }
     .tl-dot.prenatal  { color:#e91e63; }
     .tl-dot.postnatal { color:#9c27b0; }
     .tl-dot.parental  { color:#4caf50; }
     .tl-dot.parental2 { color:#2196f3; }
     .tl-dot.parental3 { color:#009688; }
+    .tl-dot.papa      { color:#f9a825; }
     .tl-label { font-size:0.8rem; font-weight:800; letter-spacing:0.04em; margin-bottom:4px; }
     .tl-label.prenatal  { color:#c2185b; }
     .tl-label.postnatal { color:#7b1fa2; }
     .tl-label.parental  { color:#2e7d32; }
     .tl-label.parental2 { color:#1565c0; }
     .tl-label.parental3 { color:#00695c; }
+    .tl-label.papa      { color:#e65100; }
     .tl-dates { font-size:1.0rem; font-weight:700; color:#333; line-height:1.5; }
     .tl-days {
       display:inline-block; margin-top:4px; font-size:0.78rem; font-weight:700;
@@ -469,6 +472,14 @@
             <span class="tl-days" id="days-parental3">-</span>
           </div>
         </div>
+        <div class="tl-item">
+          <div class="tl-dot papa"></div>
+          <div class="tl-box papa">
+            <div class="tl-label papa">👨 出生時育児休業（パパ育休）最大28日間</div>
+            <div class="tl-dates" id="dates-papa">-</div>
+            <span class="tl-days" id="days-papa">-</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -481,6 +492,7 @@
         ・産後休業（労基法第65条）：出産日の翌日から56日間<br>
         <span style="white-space:nowrap">・育児休業は子が1歳の誕生日の前日まで（原則）</span><br>
         ・保育所未入所等の場合は1歳6ヶ月の誕生日の前日・2歳の誕生日の前日まで延長可能<br>
+        ・出生時育児休業（パパ育休）：出産日から8週間以内に最大28日間取得可能（2回まで分割可）<br>
         ・実際の出産日が未入力の場合は出産予定日を使って産後・育児休業を計算しています<br>
         ・この計算はあくまで目安です。詳細は会社の人事部や社会保険労務士にご確認ください
       </div>
@@ -587,6 +599,11 @@
     set('days-parental2',  `延長分 ${parental2Count}日間`);
     set('dates-parental3', `${formatDate(parental3Start)}<br>〜 ${formatDate(parental3End)}`);
     set('days-parental3',  `延長分 ${parental3Count}日間`);
+
+    const papaStart = birthDate;
+    const papaEnd   = addDays(birthDate, 56);
+    set('dates-papa', `${formatDate(papaStart)}<br>〜 ${formatDate(papaEnd)}`);
+    set('days-papa',  `この期間内に最大28日間取得可能（2回まで分割可）`);
 
     const resultArea = document.getElementById('result-area');
     resultArea.style.display = 'block';
