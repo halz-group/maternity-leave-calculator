@@ -553,7 +553,7 @@
     const birthDate = birthDateStr ? parseLocalDate(birthDateStr) : dueDate;
 
     const prenatalDays  = isMultiple ? 98 : 42;
-    const prenatalStart = addDays(dueDate, -(prenatalDays - 1));
+    const prenatalStart = addDays(birthDate, -(prenatalDays - 1));
     const prenatalEnd   = birthDate;
     const prenatalCount = diffDays(prenatalStart, prenatalEnd) + 1;
 
