@@ -53,7 +53,7 @@
       box-shadow: 0 4px 18px rgba(21, 101, 192, 0.35);
       color: white;
     }
-    .header-banner h1 { font-size: 0.98rem; font-weight: bold; line-height: 1.4; white-space: nowrap; }
+    .header-banner h1 { font-size: 1.05rem; font-weight: bold; line-height: 1.5; }
     .header-banner p  { font-size: 0.8rem; opacity: 0.88; margin-top: 5px; }
 
     /* ===== カード ===== */
@@ -740,26 +740,33 @@ function showResultErr(msgs) {
 }
 
 /* =====================================================
-   背景デコレーション（ランダム配置）
+   背景デコレーション（左右均等配置）
    ===================================================== */
 (function () {
   const emojis = ['👶','🍼','💙','⭐','✨','💫','🌟','🎀','💕','🧸','🌷','🎊'];
   const wrap = document.getElementById('decoWrap');
-  for (let i = 0; i < 20; i++) {
-    const el = document.createElement('div');
-    el.className = 'deco-item';
-    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-    const left  = Math.random() * 100;
-    const top   = Math.random() * 120;
-    const dur   = 4 + Math.random() * 5;
-    const delay = Math.random() * -8;
-    const size  = (1.1 + Math.random() * 1.2).toFixed(1);
-    el.style.cssText =
-      'left:' + left + '%;top:' + top + '%;' +
-      'animation-duration:' + dur.toFixed(1) + 's;' +
-      'animation-delay:' + delay.toFixed(1) + 's;' +
-      'font-size:' + size + 'rem;';
-    wrap.appendChild(el);
+  // 横5列×縦4行 = 20マスに1つずつ配置してムラをなくす
+  const cols = 5, rows = 4;
+  let idx = 0;
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const el = document.createElement('div');
+      el.className = 'deco-item';
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      // 各マスの中でランダムにずらす
+      const left  = (col / cols) * 100 + Math.random() * (100 / cols);
+      const top   = (row / rows) * 110 + Math.random() * (110 / rows);
+      const dur   = 4 + Math.random() * 5;
+      const delay = Math.random() * -8;
+      const size  = (1.1 + Math.random() * 1.2).toFixed(1);
+      el.style.cssText =
+        'left:' + left.toFixed(1) + '%;top:' + top.toFixed(1) + '%;' +
+        'animation-duration:' + dur.toFixed(1) + 's;' +
+        'animation-delay:' + delay.toFixed(1) + 's;' +
+        'font-size:' + size + 'rem;';
+      wrap.appendChild(el);
+      idx++;
+    }
   }
 })();
 </script>
