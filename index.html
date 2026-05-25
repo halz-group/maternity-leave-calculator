@@ -566,7 +566,9 @@
     const birthDate = birthDateStr ? parseLocalDate(birthDateStr) : dueDate;
 
     const prenatalDays  = isMultiple ? 98 : 42;
-    const prenatalStart = addDays(birthDate, -(prenatalDays - 1));
+    // 産前起算日：出産日と予定日のうち早い方（遅れた場合は予定日が基準）
+    const prenatalRef   = birthDate <= dueDate ? birthDate : dueDate;
+    const prenatalStart = addDays(prenatalRef, -(prenatalDays - 1));
     const prenatalEnd   = birthDate;
     const prenatalCount = diffDays(prenatalStart, prenatalEnd) + 1;
 
