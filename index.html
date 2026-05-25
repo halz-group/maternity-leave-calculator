@@ -182,7 +182,7 @@
     .tl-dot.parental2 { color:#2196f3; }
     .tl-dot.parental3 { color:#009688; }
     .tl-dot.papa      { color:#f9a825; }
-    .tl-label { font-size:0.8rem; font-weight:800; letter-spacing:0.04em; margin-bottom:4px; }
+    .tl-label { font-size:0.8rem; font-weight:800; letter-spacing:0.04em; margin-bottom:4px; word-break:break-word; }
     .tl-label.prenatal  { color:#c2185b; }
     .tl-label.postnatal { color:#7b1fa2; }
     .tl-label.parental  { color:#2e7d32; }
@@ -191,9 +191,10 @@
     .tl-label.papa      { color:#e65100; }
     .tl-dates { font-size:1.0rem; font-weight:700; color:#333; line-height:1.5; }
     .tl-days {
-      display:inline-block; margin-top:4px; font-size:0.78rem; font-weight:700;
-      padding:2px 10px; border-radius:20px;
+      display:block; margin-top:4px; font-size:0.78rem; font-weight:700;
+      padding:4px 10px; border-radius:12px;
       background:rgba(255,255,255,0.7); color:#666;
+      word-break:break-word; white-space:normal;
     }
 
     .summary-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
