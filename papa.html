@@ -207,6 +207,61 @@
     .second-section.visible { display: block; }
 
     /* ===== 計算ボタン ===== */
+    /* ===== STEP案内 ===== */
+    .step-guide {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #e3f2fd;
+      border: 2px solid #90caf9;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #1565c0;
+    }
+    .step-num {
+      background: #1565c0;
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+    .step-arrow { font-size: 1.1rem; color: #90caf9; }
+
+    /* ===== ボタン点滅アニメ ===== */
+    @keyframes btnPulse {
+      0%, 100% { box-shadow: 0 4px 14px rgba(21,101,192,0.4); }
+      50%       { box-shadow: 0 4px 28px rgba(21,101,192,0.75), 0 0 0 6px rgba(21,101,192,0.15); }
+    }
+    .calc-btn-wrap {
+      position: relative;
+      margin-bottom: 12px;
+    }
+    .calc-btn-label {
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #1565c0;
+      margin-bottom: 6px;
+      letter-spacing: 0.03em;
+    }
+    .calc-btn-label::before { content: '↓　'; }
+    .calc-btn-label::after  { content: '　↓'; }
+
     .calc-btn {
       width: 100%;
       padding: 14px;
@@ -222,8 +277,9 @@
       transition: transform 0.15s, box-shadow 0.15s;
       box-shadow: 0 4px 14px rgba(21, 101, 192, 0.4);
     }
-    .calc-btn:hover  { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(21, 101, 192, 0.5); }
+    .calc-btn:hover  { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(21, 101, 192, 0.5); animation: none; }
     .calc-btn:active { transform: translateY(0); }
+    .calc-btn { animation: btnPulse 2s ease-in-out infinite; }
 
     /* ===== 計算結果 ===== */
     .results-card { display: none; }
@@ -333,9 +389,18 @@
     <p>1回目・2回目の取得期間と残り日数を計算します</p>
   </div>
 
+  <!-- STEP案内 -->
+  <div class="step-guide">
+    <div class="step-item"><span class="step-num">1</span>出産予定日または出産日を入力</div>
+    <span class="step-arrow">→</span>
+    <div class="step-item"><span class="step-num">2</span>取得期間（開始日・終了日）を入力</div>
+    <span class="step-arrow">→</span>
+    <div class="step-item"><span class="step-num">3</span>「計算する」を押す</div>
+  </div>
+
   <!-- 基準日の入力 -->
   <div class="card">
-    <div class="card-title"><span class="icon">📅</span> 基準日の入力</div>
+    <div class="card-title"><span class="icon">📅</span> STEP 1 ｜ 基準日の入力</div>
 
     <div class="info-box">
       <div class="info-title">💡 入力方法</div>
@@ -346,10 +411,12 @@
     <div class="form-group">
       <label>出産予定日<span class="optional">（任意）</span></label>
       <input type="date" id="dueDate" oninput="updateWindow()">
+      <span style="font-size:0.78rem; color:#1565c0; font-weight:700; margin-top:3px; display:block;">📅 右のアイコンをタップして日付を選んでください</span>
     </div>
     <div class="form-group" style="margin-bottom:4px;">
       <label>実際の出産日<span class="optional">（任意）</span></label>
       <input type="date" id="birthDate" oninput="updateWindow()">
+      <span style="font-size:0.78rem; color:#1565c0; font-weight:700; margin-top:3px; display:block;">📅 右のアイコンをタップして日付を選んでください</span>
     </div>
 
     <div class="window-display" id="windowDisplay">
@@ -364,17 +431,24 @@
     </div>
   </div>
 
+  <!-- STEP1→STEP2 誘導 -->
+  <div style="text-align:center; margin: -4px 0 8px; font-size:0.88rem; font-weight:700; color:#1565c0;">
+    ↓ &nbsp; 次に取得期間（開始日・終了日）を入力してください &nbsp; ↓
+  </div>
+
   <!-- 1回目 -->
   <div class="card">
-    <div class="card-title"><span class="icon">🌟</span> 1回目の取得期間</div>
+    <div class="card-title"><span class="icon">🌟</span> STEP 2 ｜ 1回目の取得期間（開始日・終了日）</div>
     <div class="form-row">
       <div class="form-group">
         <label>開始日<span class="required">*</span></label>
         <input type="date" id="start1" oninput="updatePreview(1)">
+        <span style="font-size:0.75rem; color:#1565c0; font-weight:700; margin-top:3px; display:block;">📅 アイコンをタップ</span>
       </div>
       <div class="form-group">
         <label>終了日<span class="required">*</span></label>
         <input type="date" id="end1" oninput="updatePreview(1)">
+        <span style="font-size:0.75rem; color:#1565c0; font-weight:700; margin-top:3px; display:block;">📅 アイコンをタップ</span>
       </div>
     </div>
     <div class="preview-box" id="preview1">
@@ -399,10 +473,12 @@
         <div class="form-group">
           <label>開始日</label>
           <input type="date" id="start2" oninput="updatePreview(2)">
+          <span style="font-size:0.75rem; color:#1565c0; font-weight:700; margin-top:3px; display:block;">📅 アイコンをタップ</span>
         </div>
         <div class="form-group">
           <label>終了日</label>
           <input type="date" id="end2" oninput="updatePreview(2)">
+          <span style="font-size:0.75rem; color:#1565c0; font-weight:700; margin-top:3px; display:block;">📅 アイコンをタップ</span>
         </div>
       </div>
       <div class="preview-box" id="preview2" style="background:linear-gradient(135deg,#f3e5f5,#e8f5e9);">
@@ -414,7 +490,10 @@
   </div>
 
   <!-- 計算ボタン -->
-  <button class="calc-btn" onclick="calculate()">✨ 計算する</button>
+  <div class="calc-btn-wrap">
+    <div class="calc-btn-label">STEP 3 ｜ 最後に計算するを押してください</div>
+    <button class="calc-btn" onclick="calculate()">✨ 計算する</button>
+  </div>
 
   <!-- 計算結果 -->
   <div class="card results-card" id="resultsCard">
