@@ -423,7 +423,7 @@
       <label>出産予定日<span class="optional">（任意）</span></label>
       <div class="date-wrap">
         <input type="date" id="dueDate" oninput="updateWindow()">
-        <button class="cal-btn" type="button" onclick="document.getElementById('dueDate').showPicker()">📅</button>
+        <label class="cal-btn" for="dueDate">📅</label>
       </div>
       <span style="font-size:0.78rem; color:#1565c0; font-weight:700; margin-top:3px; display:block;">👆 入力欄または📅をタップして日付を選んでください</span>
     </div>
@@ -431,7 +431,7 @@
       <label>実際の出産日<span class="optional">（任意）</span></label>
       <div class="date-wrap">
         <input type="date" id="birthDate" oninput="updateWindow()">
-        <button class="cal-btn" type="button" onclick="document.getElementById('birthDate').showPicker()">📅</button>
+        <label class="cal-btn" for="birthDate">📅</label>
       </div>
       <span style="font-size:0.78rem; color:#1565c0; font-weight:700; margin-top:3px; display:block;">👆 入力欄または📅をタップして日付を選んでください</span>
     </div>
@@ -461,7 +461,7 @@
         <label>開始日<span class="required">*</span></label>
         <div class="date-wrap">
           <input type="date" id="start1" oninput="updatePreview(1)">
-          <button class="cal-btn" type="button" onclick="document.getElementById('start1').showPicker()">📅</button>
+          <label class="cal-btn" for="start1">📅</label>
         </div>
         <span style="font-size:0.75rem; color:#1565c0; font-weight:700; margin-top:3px; display:block;">👆 入力欄または📅をタップ</span>
       </div>
@@ -469,7 +469,7 @@
         <label>終了日<span class="required">*</span></label>
         <div class="date-wrap">
           <input type="date" id="end1" oninput="updatePreview(1)">
-          <button class="cal-btn" type="button" onclick="document.getElementById('end1').showPicker()">📅</button>
+          <label class="cal-btn" for="end1">📅</label>
         </div>
         <span style="font-size:0.75rem; color:#1565c0; font-weight:700; margin-top:3px; display:block;">👆 入力欄または📅をタップ</span>
       </div>
@@ -497,7 +497,7 @@
           <label>開始日</label>
           <div class="date-wrap">
             <input type="date" id="start2" oninput="updatePreview(2)">
-            <button class="cal-btn" type="button" onclick="document.getElementById('start2').showPicker()">📅</button>
+            <label class="cal-btn" for="start2">📅</label>
           </div>
           <span style="font-size:0.75rem; color:#1565c0; font-weight:700; margin-top:3px; display:block;">👆 入力欄または📅をタップ</span>
         </div>
@@ -505,7 +505,7 @@
           <label>終了日</label>
           <div class="date-wrap">
             <input type="date" id="end2" oninput="updatePreview(2)">
-            <button class="cal-btn" type="button" onclick="document.getElementById('end2').showPicker()">📅</button>
+            <label class="cal-btn" for="end2">📅</label>
           </div>
           <span style="font-size:0.75rem; color:#1565c0; font-weight:700; margin-top:3px; display:block;">👆 入力欄または📅をタップ</span>
         </div>
