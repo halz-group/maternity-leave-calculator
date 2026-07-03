@@ -94,10 +94,13 @@
       flex-shrink: 0; width: 42px; height: 42px;
       border: 2px solid #bbdefb; border-radius: 10px;
       background: #e3f2fd; font-size: 1.3rem;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; box-sizing: border-box; padding: 0; margin: 0;
+      display: flex; align-items: center; justify-content: center;
+      line-height: 42px; text-align: center;
       transition: background 0.2s, border-color 0.2s;
     }
-    .cal-btn:hover, .cal-btn:active { background: #bbdefb; border-color: #1565c0; }
+    .cal-btn span { display: block; line-height: 1; }
+    .cal-btn:hover, .cal-btn:active { background: #fce4ec; border-color: #e91e8c; }
 
     .form-group input[type="date"],
     .form-group input[type="number"] {
