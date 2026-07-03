@@ -102,6 +102,17 @@
     label { font-size:0.85rem; font-weight:700; color:#c2185b; }
     .sub  { font-weight:400; color:#aaa; font-size:0.78rem; }
 
+    .date-wrap { display:flex; align-items:center; gap:6px; }
+    .date-wrap input[type="date"] { flex:1; }
+    .cal-btn {
+      flex-shrink:0; width:42px; height:42px;
+      border:2px solid #f8bbd0; border-radius:12px;
+      background:#fff0f5; font-size:1.3rem;
+      cursor:pointer; display:flex; align-items:center; justify-content:center;
+      transition:background 0.2s, border-color 0.2s;
+    }
+    .cal-btn:hover, .cal-btn:active { background:#fce4ec; border-color:#e91e8c; }
+
     input[type="date"] {
       padding:10px 14px; border:2px solid #f8bbd0; border-radius:14px;
       font-size:0.95rem; font-family:inherit; color:#444;
@@ -395,13 +406,19 @@
     <div class="form-grid">
       <div class="form-group">
         <label>出産予定日 <span style="color:#e91e8c">*必須</span></label>
-        <input type="date" id="due-date" />
-        <span class="sub" style="color:#e91e8c; font-weight:700;">📅 右のアイコンをタップして日付を選んでください</span>
+        <div class="date-wrap">
+          <input type="date" id="due-date" />
+          <button class="cal-btn" type="button" onclick="document.getElementById('due-date').showPicker()">📅</button>
+        </div>
+        <span class="sub" style="color:#e91e8c; font-weight:700;">👆 入力欄または📅をタップして日付を選んでください</span>
       </div>
       <div class="form-group">
         <label>実際の出産日</label>
-        <input type="date" id="birth-date" />
-        <span class="sub" style="color:#e91e8c; font-weight:700;">📅 右のアイコンをタップして日付を選んでください</span>
+        <div class="date-wrap">
+          <input type="date" id="birth-date" />
+          <button class="cal-btn" type="button" onclick="document.getElementById('birth-date').showPicker()">📅</button>
+        </div>
+        <span class="sub" style="color:#e91e8c; font-weight:700;">👆 入力欄または📅をタップして日付を選んでください</span>
         <span class="sub">未入力の場合は予定日を使用</span>
       </div>
       <div class="form-group full-width">
