@@ -373,6 +373,19 @@
     <p>出産予定日を入力するだけで、各休業期間をまとめて計算します</p>
   </div>
 
+  <!-- STEP案内 -->
+  <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
+    <div style="display:flex; align-items:center; gap:6px; background:#fff0f8; border:2px solid #f48fb1; border-radius:999px; padding:8px 18px; font-size:0.9rem; font-weight:700; color:#c2185b;">
+      <span style="background:#e91e8c; color:white; border-radius:50%; width:22px; height:22px; display:inline-flex; align-items:center; justify-content:center; font-size:0.8rem; flex-shrink:0;">1</span>
+      日付を入力する
+    </div>
+    <span style="font-size:1.4rem; color:#f48fb1;">→</span>
+    <div style="display:flex; align-items:center; gap:6px; background:#fff0f8; border:2px solid #f48fb1; border-radius:999px; padding:8px 18px; font-size:0.9rem; font-weight:700; color:#c2185b;">
+      <span style="background:#e91e8c; color:white; border-radius:50%; width:22px; height:22px; display:inline-flex; align-items:center; justify-content:center; font-size:0.8rem; flex-shrink:0;">2</span>
+      「計算する」を押す
+    </div>
+  </div>
+
   <!-- 入力カード -->
   <div class="card">
     <div class="card-title"><span class="icon">📅</span> 出産情報を入力してください</div>
@@ -383,10 +396,12 @@
       <div class="form-group">
         <label>出産予定日 <span style="color:#e91e8c">*必須</span></label>
         <input type="date" id="due-date" />
+        <span class="sub" style="color:#e91e8c; font-weight:700;">📅 右のアイコンをタップして日付を選んでください</span>
       </div>
       <div class="form-group">
         <label>実際の出産日</label>
         <input type="date" id="birth-date" />
+        <span class="sub" style="color:#e91e8c; font-weight:700;">📅 右のアイコンをタップして日付を選んでください</span>
         <span class="sub">未入力の場合は予定日を使用</span>
       </div>
       <div class="form-group full-width">
